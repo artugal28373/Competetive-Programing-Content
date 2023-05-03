@@ -21,7 +21,7 @@ int dis[mxn][20],level[mxn], n;
 vector<vector<int>> dp(mxn, vector<int>()), sub(mxn, vector<int>());
 void dfsp(int u, int pr,  int w, int clev, int c) {
     dis[u][clev] = w;
-    dp[c].push_back(w);
+    dp[c].push_back(w); // own
 //    cout << c <<" "<<u<<" ** "<<w<<endl;
     for(pii &x: v[u]) {
         if(x.first==pr || vis[x.first]) continue;
@@ -30,8 +30,8 @@ void dfsp(int u, int pr,  int w, int clev, int c) {
 }
 void dfspp(int u, int pr,  int w, int clev, int c) {
 //    cout << c <<" "<<u<<" && "<<w<<endl;
-    assert(dis[u][clev]==w);
-    sub[c].push_back(w);
+    assert(dis[u][clev]==w); 
+    sub[c].push_back(w); // sub
     for(pii &x: v[u]) {
         if(x.first==pr || vis[x.first]) continue;
         dfspp(x.first, u, w+x.second, clev, c);
@@ -45,7 +45,7 @@ int _find(int u, int l) {
         int pp = parent[u];
         int w = dis[v][level[pp]];
         if(l>=w) {
-            res+=upper_bound(dp[pp].begin(), dp[pp].end(), l-w) - dp[pp].begin();
+            res+=upper_bound(dp[pp].begin(), dp[pp].end(), l-w) - dp[pp].begin(); 
             res-=upper_bound(sub[u].begin(), sub[u].end(), l-w) - sub[u].begin();
         }
         u = parent[u];
@@ -76,13 +76,13 @@ int centroidDecomposition(int node, int par) {
     int c = findcentroid(node, 0);
     parent[c] = par;
     vis[c] = 1;
-    level[c] = level[par]+1;
+    level[c] = level[par]+1; // lg n
     dfsp(c, c, 0, level[c], c);
-    sort(dp[c].begin(), dp[c].end());
+    sort(dp[c].begin(), dp[c].end()); // for centroid
     for(pii&x: v[c]) {
         if(vis[x.first]) continue;
-        int r = centroidDecomposition(x.first, c);
-        dfspp(x.first, c, x.second, level[c], r);
+        int r = centroidDecomposition(x.first, c); 
+        dfspp(x.first, c, x.second, level[c], r); // for centroid subtree
         sort(sub[r].begin(), sub[r].end());
     }
     vis[c] = 0;
