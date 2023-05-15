@@ -2,69 +2,125 @@
 // div & con idea
 
 
-#include<bits/stdc++.h>
-#define xx first
-#define yy second
-#define mxn 100005
-#define push_back emplace_back
+#include <iostream>
+#include <cstdio>
+
+#define maxn 100005
+#define pii pair <int, int>
+#define mp make_pair
+#define fi first
+#define se second 
+
 using namespace std;
-vector<int>e1[mxn], comp[mxn], e2[mxn], sz[mxn], vec[mxn];
-int par[mxn], ss[mxn];
-int union_find(int x)
-{
-    if(x==par[x])return x;
-    else return par[x]= union_find(par[x]);
+
+inline int read(){
+	int x = 0, flag = 1;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') flag = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 3) + (x << 1) + ch - '0';
+		ch = getchar();
+	}
+	return x * flag;
 }
-int func(int c, int m)
-{
-    return sz[c][ upper_bound(e2[c].begin(), e2[c].end(), m)-e2[c].begin()-1 ];
+
+int n, m, Q, f[maxn], siz[maxn], b[maxn], bb[maxn], dep[maxn];
+pii e[maxn], s[maxn];
+
+//pii getf(int x){ //fa dep
+//	if(x == f[x]) return mp(x, 0);
+//	pii re = getf(f[x]);
+//	return mp(re.fi, re.se + 1);
+//}
+
+int getf(int x){
+	while(x != f[x]) x = f[x];
+	return x;
 }
-int main()
-{
-    int n, m, x, y, z;
-    scanf("%d %d", &n, &m);
-    for(int i=1; i<=n; i++)par[i]= i;
-    for(int i=1; i<=n; i++)
-    e1[i].push_back(0), comp[i].push_back(i), vec[i].push_back(i),
-    e2[i].push_back(0), sz[i].push_back(1), ss[i]= 1;
-    for(int i=1; i<=m; i++)
-    {
-        scanf("%d %d", &x, &y);
-        int a= union_find(x);
-        int b= union_find(y);
-        if(a!=b)
-        {
-            if(ss[a]<ss[b])swap(a, b), swap(x, y);
-            par[b]= a;
-            e2[a].push_back(i);
-            ss[a]+= ss[b];
-            sz[a].push_back(ss[a]);
-            for(int j=0; j<vec[b].size(); j++)
-            {
-                z= vec[b][j];
-                vec[a].push_back(z);
-                e1[z].push_back(i);
-                comp[z].push_back(a);
-            }vec[b].clear();
-        }
-    }
-    int q;
-    scanf("%d", &q);
-    while(q--)
-    {
-        scanf("%d %d %d", &x, &y, &z);
-        int lo= 1, hi= m, res;
-        while(lo<=hi)
-        {
-            int mid= (lo+hi)/2;
-            int cx= comp[x][ upper_bound(e1[x].begin(), e1[x].end(), mid)-e1[x].begin()-1 ];
-            int cy= comp[y][ upper_bound(e1[y].begin(), e1[y].end(), mid)-e1[y].begin()-1 ];
-            int tot= func(cx, mid);
-            if(cx!=cy)tot+= func(cy, mid);
-            if(tot>=z)res= mid, hi= mid-1;
-            else lo= mid+1;
-        }
-        printf("%d\n", res);
-    }
-    return 0;
+
+struct que{
+	int x, y, z, ans;
+}q[maxn];
+
+int now = 0;
+
+void erfen(int l, int r, int bl, int br){
+//	cout<<' '<<l<<' '<<r<<endl;
+//	for(int i = bl; i <= br; ++i) cout << b[i] << ' ';
+//	puts("");
+	int mid = (l + r) >> 1;
+	while(now < mid){
+		++now;
+		int fu = getf(e[now].fi), fv = getf(e[now].se);
+		if(fu != fv){
+//			if(fu.se > fv.se) swap(fu, fv);
+			if(dep[fu] > dep[fv]) swap(fu, fv);
+			s[now] = mp(fu, fv);
+			f[fu] = fv;
+			siz[fv] += siz[fu];
+			dep[fv] = max(dep[fv], dep[fu] + 1);
+		}else s[now] = mp(0, 0);
+	}
+	while(now > mid){
+		int u = s[now].fi, v = s[now].se;
+		if(u){
+			siz[v] -= siz[u];
+			f[u] = u;
+		}
+		--now;
+	}
+//	cout<<"mid = "<<mid<<endl;
+//	for(int i = 1; i <= n; ++i) cout << siz[getf(i).fi]<<' ';
+//	puts("");
+	if(l == r){
+		for(int i = bl; i <= br; ++i) q[b[i]].ans = l;
+		return;
+	}
+	int numl = bl - 1, numr = 0;
+	for(int I = bl; I <= br; ++I){
+		int i = b[I];
+		int fx = getf(q[i].x), fy = getf(q[i].y);
+		if(fx == fy){
+			if(siz[fx] >= q[i].z) b[++numl] = i;
+			else bb[++numr] = i;
+		}else{
+			if(siz[fx] + siz[fy] >= q[i].z) b[++numl] = i;
+			else bb[++numr] = i;
+		}
+	}
+//	for(int i = bl; i <= numl; ++i) cout << b[i] << ' ';
+//	for(int i = 1; i <= numr; ++i) cout << bb[i] << ' ';
+//	puts("");
+//	for(int i = 1; i <= numr; ++i) b[i + numl] = bb[i];
+	for(int i = numl + 1; i <= br; ++i) b[i] = bb[i - numl];
+//	for(int i = bl; i <= br; ++i) cout << b[i] << ' ';
+//	puts("");
+	erfen(l, mid, bl, numl);
+	erfen(mid + 1, r, numl + 1, br);
+	return;
 }
+
+int main(){
+//	freopen("in.in", "r", stdin);
+//	freopen("out.out", "w", stdout);
+	n = read(), m = read();
+	for(int i = 1; i <= n; ++i) f[i] = i, siz[i] = 1;
+	for(int i = 1; i <= m; ++i) e[i].fi = read(), e[i].se = read(); 
+	Q = read();
+	for(int i = 1; i <= Q; ++i) q[i].x = read(), q[i].y = read(), q[i].z = read(), b[i] = i;
+	erfen(1, m, 1, Q);
+	for(int i = 1; i <= Q; ++i) printf("%d\n", q[i].ans);
+	return 0; 
+}
+/*
+1
+2
+3
+1
+5
+5
+
+*/
