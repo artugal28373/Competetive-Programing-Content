@@ -1,6 +1,6 @@
-# [[Tutorial] Zeta, Mobius Transform to AND, OR, GCD Convolution](https://codeforces.com/blog/entry/119082)
-
-![image](https://github.com/user-attachments/assets/d3af1634-51b9-4b63-9686-d686dce04d7d)
+ [[Tutorial] Zeta, Mobius Transform to AND, OR, GCD Convolution](https://codeforces.com/blog/entry/119082)<br>
+ [Tutorial on Zeta Transform, Mobius Transform and Subset Sum Convolution](https://codeforces.com/blog/entry/72488)
+<br><br>![image](https://github.com/user-attachments/assets/d3af1634-51b9-4b63-9686-d686dce04d7d)
 
 # superset and subset sum
 
