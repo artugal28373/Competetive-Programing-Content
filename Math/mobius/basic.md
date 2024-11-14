@@ -1,1 +1,3 @@
-$\sqrt{3x-1}+(1+x)^2$
+
+$g(t) = \sum_{s \subseteq t}{f(s)}$ <br>
+$f(t) = \sum_{s \subseteq t}{(-1)^{|t \setminus s|}g(s)}$
