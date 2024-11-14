@@ -5,7 +5,8 @@
 
  $ζ(s,t)$ as $1$ if $s≤t$ and $0$ otherwise.<br>
 $μ(s,t)=\begin{cases}0 & \text{if }s \nleq t\\ 1 & \text{else if }s = t\\ -\sum_{s < u \leq t}{μ(u, t)} & \text{otherwise}\end{cases}$<br>
-
+<br>$\sigma z \sigma(f(s)) = \mu(f(s))$
+<br>$\sigma(f(s)) = (-1)^{|s|}*f(s)$
 
 # superset and subset sum
 
